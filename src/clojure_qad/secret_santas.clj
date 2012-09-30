@@ -57,13 +57,33 @@
 
 (declare key->name)
 
+;; (defn last-name2 [player]
+;;   (let [f (fn [s]
+;;             (println "splitting: >>" s "<<")
+;;             (last (str/split s #"\s")))] 
+;;     (if (keyword? player)
+;;       (do
+;;         (println "1last-name will return : " (f (key->name player)))
+;;         (f (key->name player)))
+;;       (do
+;;         (println "2last-name will return : " (f player))
+;;         (f player))
+;;       )
+;;     )
+;;   )
+
 (defn last-name [player]
+  ;; (println "Sent:::" player)
   (let [f (fn [s]
+            ;; (println "splitting: >>" s "<<")
             (last (str/split s #"\s")))] 
-    (if (keyword? player)
-      (f (key->name player))
-      (f player)
-      )))
+    (cond
+     (nil? player) player
+     (keyword? player) (f (key->name player))
+     :else (f player)
+     )
+    )
+  )
 
 (defn possible-choices [players]
   ;; TODO: the filter needs to be adjusted once we have actual names and people
@@ -79,11 +99,19 @@
    pairs: list/vector of tuples name->name
    Returns the next tuple of the santa and the chosen recipient"
   [taken pairs]
-  (first (filter #((complement taken) (second %)) (shuffle pairs))))
+  (let [f (fn [pair]
+            (cond
+             (taken (second pair)) nil
+             (= (last-name (first pair)) (last-name (second pair))) nil
+             :else pair))]
+    (first (filter f (shuffle pairs))))
+  ;; (first (filter #((complement taken) (second %)) (shuffle pairs)))
+  )
 
 (defn version2 [players]
   (let [p (possible-choices players)]
     (loop [santas (keys p) selected #{} pairs []]
+      ;; (println "selected: " selected)
       (if (empty? santas)
         pairs
         (let [pair (next-pair selected ((first santas) p))]
