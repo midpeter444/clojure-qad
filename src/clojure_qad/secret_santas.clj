@@ -95,6 +95,10 @@
   [v]
   (< 0 (count (filter nil? v))))
 
+(defn echo [v]
+  (println v)
+  (println (get-names)))
+
 ;; LEFT-OFF: need to filter out couples with last name so they can't select each other
 ;; then need to learn how to read the input from STDIN
 ;; and format the output to STDOUT
@@ -103,26 +107,11 @@
   [& args]
   (println "Enter players names, one per line.  Type :done when finished.")
 
-  ;; (println (line-seq (java.io.BufferedReader. *in*)))
-  ;; (doall (map println
-  ;;             (line-seq (java.io.BufferedReader. (java.io.FileReader. (first args))))  ))
-  ;; (println (line-seq (java.io.BufferedReader. (java.io.FileReader. (first args)))))
-
-  ;; doesn't work => break it down step by step
-  (let [rdr (java.io.BufferedReader. *in*)]
-    (loop [state :start players []]
-      (if (= state :done)
-        (println (make-selections players))
-        (let [input (line-seq rdr)]
-          (recur input (if (= :done input)
-                         players
-                         (conj players input)
-            ))
-          )
-        )
-      ))
-  (println "EOP")
-  ;; (make-selections (get-names))
-  )
+  (loop [input (read-line) players []]
+    (if (= ":done" input)
+      (println (make-selections (name->key players)))
+      (recur (read-line) (conj players (str/trim input)))))
+  
+  (println "EOP"))
 
 

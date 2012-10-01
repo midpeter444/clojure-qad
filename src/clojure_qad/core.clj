@@ -1,6 +1,15 @@
 (ns clojure-qad.core)
 
+
+
 (defn -main
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+  "Read from STDIN"
+  [& args]
+  (println "Enter text:")
+
+  (loop [input (read-line)]
+    (when-not (= ":done" input)
+      (println (str "You entered: >>" input "<<"))
+      (recur (read-line))))
+
+  (println "EOP"))
