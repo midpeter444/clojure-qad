@@ -3,6 +3,7 @@
   :url "http://midpeter444.github.com/clojure-qad"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :plugins [[lein-expectations "0.0.8"]]
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [org.clojure/math.combinatorics "0.0.3"]
                  [lein-expectations "0.0.8"]

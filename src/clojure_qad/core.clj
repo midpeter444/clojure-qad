@@ -1,15 +1,16 @@
-(ns clojure-qad.core)
+(ns example.stdin)
 
-
+(defn do-something-cool [v]
+  (println v))
 
 (defn -main
   "Read from STDIN"
   [& args]
   (println "Enter text:")
 
-  (loop [input (read-line)]
-    (when-not (= ":done" input)
-      (println (str "You entered: >>" input "<<"))
-      (recur (read-line))))
+  (loop [input (read-line) acc []]
+    (if (= ":done" input)
+      (do-something-cool acc)
+      (recur (read-line) (conj acc input))))
 
-  (println "EOP"))
+  (println "End"))
