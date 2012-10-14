@@ -3,7 +3,7 @@
         clojure-qad.solitaire-cipher))
 
 
-;; block-format
+;;block-format
 (def block1 (partition 5 "IAMHAPPIERTHANIWASBEFOREX"))
         
 (expect block1 (block-format "I am happier than I was before!!"))
@@ -19,3 +19,4 @@
 (expect [16 16 9 5 18] (second (text->num block1)))
 (expect (count block1) (count (text->num block1)))
 (expect (count (last block1)) (count (last (text->num block1))))
+
