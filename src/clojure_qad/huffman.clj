@@ -65,9 +65,8 @@
 (defn create-code-tree
   "Encodes the text passed in into a single Huffman CodeTree"
   [^String text]
-  (let [mfreq (frequencies text)
-        vleafs (ordered-leaf-vec mfreq)
-        ]
-    (first (make-single-tree vleafs))
-    )
-  )
+  (->> text
+       frequencies
+       ordered-leaf-vec
+       make-single-tree
+       first))
