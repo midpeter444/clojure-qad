@@ -5,8 +5,8 @@
   "Huffman encoded tree of letters"
   (get-chars  [this])
   (leaf? [this])
+  (decode-node [this callback tree bits chars])
   )
-
 
 (defrecord Fork [left right chars weight])
 (defrecord Leaf [char weight])
@@ -15,12 +15,19 @@
   CodeTree
   (get-chars [this] (:chars this))
   (leaf? [this] false)
+  (decode-node [this callback tree bits chars]
+    (if (= 0 (first bits))
+      (callback (:left this) (rest bits) chars)
+      (callback (:right this) (rest bits) chars)
+      ))
   )
 
 (extend-type Leaf
   CodeTree
   (get-chars [this] (vector (:char this)))
   (leaf? [this] true)
+  (decode-node [this callback tree bits chars]
+    (callback tree bits (conj chars (:char this))))
   )
 
 
@@ -97,8 +104,17 @@
                 (if (= 0 (first bits))
                   (fdec (:left subtree)  (rest bits) acc-chars)
                   (fdec (:right subtree) (rest bits) acc-chars)))))]
-    (apply str (fdec tree bit-path []))
-    )
+    (apply str (fdec tree bit-path [])))
+  )
+
+(defn decode2 [tree bit-path]
+  (letfn [(fdec [subtree bits acc-chars]
+            (if (empty? bits)
+              (conj acc-chars (:char subtree))
+              (decode-node subtree fdec tree bits acc-chars)))]
+    (apply str
+           (lazy-seq
+            (fdec tree bit-path []))))
   )
 
 

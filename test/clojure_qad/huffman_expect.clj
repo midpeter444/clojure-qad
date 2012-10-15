@@ -83,3 +83,6 @@
 (def tree-sassy (create-code-tree "sassy"))
 (expect "ass" (decode tree-sassy [0 0 1 1]))
 (expect "say" (decode tree-sassy [1 0 0 0 1]))
+
+(expect "ass" (decode2 tree-sassy [0 0 1 1]))
+(expect "say" (decode2 tree-sassy [1 0 0 0 1]))
