@@ -79,3 +79,7 @@
 ;; compare the two directory - so embed the results in a single-entry vec
 (expect [fork-abxz] (vector (create-code-tree text-abxz)))
 
+;; ---[ decode ]--- ;;
+(def tree-sassy (create-code-tree "sassy"))
+(expect "ass" (decode tree-sassy [0 0 1 1]))
+(expect "say" (decode tree-sassy [1 0 0 0 1]))

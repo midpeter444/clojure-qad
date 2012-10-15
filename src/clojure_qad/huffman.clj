@@ -1,9 +1,11 @@
 (ns clojure-qad.huffman)
 
-;; don't think I need this
+;; ---[ Data Structure Definition ]--- ;;
 (defprotocol CodeTree
   "Huffman encoded tree of letters"
-  (get-chars  [this]))
+  (get-chars  [this])
+  (leaf? [this])
+  )
 
 
 (defrecord Fork [left right chars weight])
@@ -11,12 +13,18 @@
 
 (extend-type Fork
   CodeTree
-  (get-chars [this] (:chars this)))
+  (get-chars [this] (:chars this))
+  (leaf? [this] false)
+  )
 
 (extend-type Leaf
   CodeTree
-  (get-chars [this] (vector (:char this))))
+  (get-chars [this] (vector (:char this)))
+  (leaf? [this] true)
+  )
 
+
+;; ---[ Creation Functions ]--- ;;
 
 (defn union-code-tree-pair
   "returns Fork"
@@ -70,3 +78,30 @@
        ordered-leaf-vec
        make-single-tree
        first))
+
+
+;; ---[ Decode Functions ]--- ;;
+
+(defn decode
+  "Takes a single Huffman encoded CodeTree and a sequence of 'bits'
+   (0 = 'go left', 1 = 'go right') to navigate the CodeTree in order
+   to decode the message. Returns the message as a string."
+  [tree bit-path]
+  (letfn [(fdec [subtree bits acc-chars]
+            (if (empty? bits)
+              (if (leaf? subtree)
+                (conj acc-chars (:char subtree))
+                acc-chars)
+              (if (leaf? subtree)
+                (fdec tree bits (conj acc-chars (:char subtree)))
+                (if (= 0 (first bits))
+                  (fdec (:left subtree)  (rest bits) acc-chars)
+                  (fdec (:right subtree) (rest bits) acc-chars)))))]
+    (apply str (fdec tree bit-path []))
+    )
+  )
+
+
+;; ---[ Encode Functions ]--- ;;
+
+
