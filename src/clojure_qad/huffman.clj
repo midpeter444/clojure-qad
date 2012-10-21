@@ -6,6 +6,7 @@
   (get-chars  [this])
   (leaf? [this])
   (decode-node [this callback tree bits chars])
+  (encode-node [this callback tree bits chars])
   )
 
 (defrecord Fork [left right chars weight])
@@ -14,20 +15,36 @@
 (extend-type Fork
   CodeTree
   (get-chars [this] (:chars this))
+
   (leaf? [this] false)
+
   (decode-node [this callback tree bits chars]
     (if (= 0 (first bits))
       (callback (:left this) (rest bits) chars)
-      (callback (:right this) (rest bits) chars)
-      ))
-  )
+      (callback (:right this) (rest bits) chars)))
 
+  (encode-node [this callback tree bits chars]
+    (let [ncontains? (fn [c node]
+                       (some #(= c %) (get-chars node)))
+          mnext (if (ncontains? (first chars) (:left this))
+                  {:node (:left this), :dir 0}
+                  {:node (:right this), :dir 1})]
+      (callback (:node mnext) (conj bits (:dir mnext)) chars)))
+  )
+  
 (extend-type Leaf
   CodeTree
   (get-chars [this] (vector (:char this)))
+
   (leaf? [this] true)
+
   (decode-node [this callback tree bits chars]
     (callback tree bits (conj chars (:char this))))
+
+  (encode-node [this callback tree bits chars]
+    (if (= (:char this) (first chars))
+      (callback tree bits (rest chars))
+      (throw (IllegalStateException. "Leaf Char does not match next char on list of chars"))))
   )
 
 
@@ -120,4 +137,33 @@
 
 ;; ---[ Encode Functions ]--- ;;
 
+(defn encode
+  "Simple (brute-force) encoding with ???"
+  [tree text]
+  (letfn [(fenc [subtree bits chars]
+            (if (empty? chars)
+              bits
+              (encode-node subtree fenc tree bits chars)))]
+    (fenc tree [] (seq text))))
 
+(defn create-path-map
+  "Takes a CodeTree and walks all the paths
+   to generate a map of each char in the tree to its
+   bit-path, which it returns."
+  [tree]
+  (letfn [(create-map [sub-tree bit-path]
+            (if (leaf? sub-tree)
+              {(:char sub-tree) bit-path}
+              (merge (create-map (:left sub-tree) (conj bit-path 0))
+                     (create-map (:right sub-tree) (conj bit-path 1)))))]
+    (create-map tree [])))
+
+;; is there a better way to write the fenc fn?
+;; map? or recur at least? or lazy-seq?
+(defn fast-encode [tree text]
+  (let [path-map (create-path-map tree)
+        fenc (fn fenc [chars]
+               (if (empty? chars)
+                 []
+                 (concat (path-map (first chars)) (fenc (rest chars)))))]
+    (vec (fenc (seq text)))))

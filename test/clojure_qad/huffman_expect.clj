@@ -86,3 +86,16 @@
 
 (expect "ass" (decode2 tree-sassy [0 0 1 1]))
 (expect "say" (decode2 tree-sassy [1 0 0 0 1]))
+
+
+;; ---[ encode ]--- ;;
+(expect [0 0 1 1] (encode tree-sassy "ass"))
+(expect [1 0 0 0 1] (encode tree-sassy "say"))
+
+
+;; ---[ fast-encode ]--- ;;
+
+(def pm (create-path-map tree-sassy))
+(expect {\s [1], \y [0 1], \a [0 0]} pm)
+(expect [0 0 1 1] (fast-encode tree-sassy "ass"))
+(expect [1 0 0 0 1] (fast-encode tree-sassy "say"))
