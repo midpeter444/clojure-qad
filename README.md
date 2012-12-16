@@ -1,16 +1,13 @@
 # clojure-qad
 
-A Clojure library designed to ... well, that part is up to you.
-http://klingonska.org/dict/?q=test
-
 qaD: challenge, test of one's abilities
+From the original Klingon: http://klingonska.org/dict/?q=test  :-)
 
-## Usage
+I keep programming challenge exercises I've done in Clojure in this repo.  So far, these have come from the [Ruby Quiz](http://www.rubyquiz.com/) and [Programming Praxis](http://programmingpraxis.com/).
 
-FIXME
 
 ## License
 
-Copyright © 2012 FIXME
+Copyright © 2012 Michael Peterson
 
 Distributed under the Eclipse Public License, the same as Clojure.
