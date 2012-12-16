@@ -2,12 +2,6 @@
   (:require [clojure.math.combinatorics :refer [selections]]
             [clojure.string :as str]))
 
-;; read in all names  <= only in main
-;; put input names in vector <= testable
-;; xxx
-;; puts santa -> receiver mappings in map <= testable
-;; print out map
-;; (comb/combinations v 2)
 
 (declare key->name)
 
@@ -28,7 +22,6 @@
 
 ;; ;; {santa
 ;; ;;  (first (filter (complement (merge selected santa)) (shuffle players)))}
-;; ;; TODO: may not need the santa name here as an arg ...
 (defn next-pair
   "taken: set of names already selected (already have a santa)
    pairs: list/vector of tuples name->name
@@ -83,11 +76,9 @@
                (map #(subs (str %) 1) pair))]
       (map kn x))))
 
-(defn get-names []
-  ;; this should read from STDIN later
-  ;; [:a :b :c :d :e]
-  (name->key ["Mr Gray" "Mrs Gray" "Mr Thomas" "Mrs Thomas" "Mr Matsumoto" "Mrs Matsumoto" "Mr Fulton"])
-  )
+;; method for testing only -> move to test/expect codebase
+(defn- get-names []
+  (name->key ["Mr Gray" "Mrs Gray" "Mr Thomas" "Mrs Thomas" "Mr Matsumoto" "Mrs Matsumoto" "Mr Fulton"]))
 
 (defn contains-nil?
   "Returns true if the vector/list/seq passed in contains nil
@@ -95,23 +86,25 @@
   [v]
   (< 0 (count (filter nil? v))))
 
-(defn echo [v]
-  (println v)
-  (println (get-names)))
+(defn read-input
+  "Takes in the input from the user (STDIN) and returns the names as a
+   seq of keywords (names mapped to their corresponding keywords."
+  []
+  (println "Enter players names, one per line.  Type :done when finished.")
+  (loop [input (read-line) players []]
+    (if (= ":done" input)
+      (name->key players)
+      (recur (read-line) (conj players (str/trim input))))))
 
-;; LEFT-OFF: need to filter out couples with last name so they can't select each other
-;; then need to learn how to read the input from STDIN
-;; and format the output to STDOUT
+(defn format-output [v]
+  (println "--- Secret Santa Pairs ---")
+  (dorun (map #(println (first %) "->" (second %)) v)))
+
 (defn -main
   "Run the secret-santas quiz"
   [& args]
-  (println "Enter players names, one per line.  Type :done when finished.")
-
-  (loop [input (read-line) players []]
-    (if (= ":done" input)
-      (println (make-selections (name->key players)))
-      (recur (read-line) (conj players (str/trim input)))))
-  
-  (println "EOP"))
+  (-> (read-input)
+      make-selections
+      format-output))
 
 
