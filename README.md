@@ -1,6 +1,7 @@
 # clojure-qad
 
-qaD: challenge, test of one's abilities
+*qaD*: challenge, test of one's abilities
+
 From the original Klingon: http://klingonska.org/dict/?q=test  :-)
 
 I keep programming challenge exercises I've done in Clojure in this repo.  So far, these have come from the [Ruby Quiz](http://www.rubyquiz.com/) and [Programming Praxis](http://programmingpraxis.com/).
